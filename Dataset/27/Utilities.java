@@ -1,16 +1,6 @@
-/*
- * This is the source code of Telegram for Android v. 3.x.x.
- * It is licensed under GNU GPL v. 2 or later.
- * You should have received a copy of the license in this archive (see LICENSE).
- *
- * Copyright Nikolai Kudashov, 2013-2015.
- */
-
 package org.telegram.messenger;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.math.BigInteger;
@@ -19,19 +9,14 @@ import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 public class Utilities {
-
     public static Pattern pattern = Pattern.compile("[0-9]+");
     public static SecureRandom random = new SecureRandom();
-
     public static volatile DispatchQueue stageQueue = new DispatchQueue("stageQueue");
     public static volatile DispatchQueue globalQueue = new DispatchQueue("globalQueue");
     public static volatile DispatchQueue searchQueue = new DispatchQueue("searchQueue");
     public static volatile DispatchQueue phoneBookQueue = new DispatchQueue("photoBookQueue");
-
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
-
     static {
         try {
             File URANDOM_FILE = new File("/dev/urandom");
@@ -44,7 +29,6 @@ public class Utilities {
             FileLog.e("tmessages", e);
         }
     }
-
     public native static void loadBitmap(String path, Bitmap bitmap, int scale, int width, int height, int stride);
     public native static int pinBitmap(Bitmap bitmap);
     public native static void blurBitmap(Object bitmap, int radius, int unpin);
@@ -52,11 +36,9 @@ public class Utilities {
     public native static boolean loadWebpImage(Bitmap bitmap, ByteBuffer buffer, int len, BitmapFactory.Options options, boolean unpin);
     public native static int convertVideoFrame(ByteBuffer src, ByteBuffer dest, int destFormat, int width, int height, int padding, int swap);
     private native static void aesIgeEncryption(ByteBuffer buffer, byte[] key, byte[] iv, boolean encrypt, int offset, int length);
-
     public static void aesIgeEncryption(ByteBuffer buffer, byte[] key, byte[] iv, boolean encrypt, boolean changeIv, int offset, int length) {
         aesIgeEncryption(buffer, key, changeIv ? iv : iv.clone(), encrypt, offset, length);
     }
-
     public static Integer parseInt(String value) {
         if (value == null) {
             return 0;
@@ -73,7 +55,6 @@ public class Utilities {
         }
         return val;
     }
-
     public static String parseIntToString(String value) {
         Matcher matcher = pattern.matcher(value);
         if (matcher.find()) {
@@ -81,7 +62,6 @@ public class Utilities {
         }
         return null;
     }
-
     public static String bytesToHex(byte[] bytes) {
         if (bytes == null) {
             return "";
@@ -95,7 +75,6 @@ public class Utilities {
         }
         return new String(hexChars);
     }
-
     public static byte[] hexToBytes(String hex) {
         if (hex == null) {
             return null;
@@ -107,7 +86,6 @@ public class Utilities {
         }
         return data;
     }
-
     public static boolean isGoodPrime(byte[] prime, int g) {
         if (!(g >= 2 && g <= 7)) {
             return false;
@@ -116,9 +94,7 @@ public class Utilities {
         if (prime.length != 256 || prime[0] >= 0) {
             return false;
         }
-
         BigInteger dhBI = new BigInteger(1, prime);
-
         if (g == 2) { // p mod 8 = 7 for g = 2;
             BigInteger res = dhBI.mod(BigInteger.valueOf(8));
             if (res.intValue() != 7) {
@@ -148,20 +124,16 @@ public class Utilities {
                 return false;
             }
         }
-
         String hex = bytesToHex(prime);
         if (hex.equals("C71CAEB9C6B1C9048E6C522F70F13F73980D40238E3E21C14934D037563D930F48198A0AA7C14058229493D22530F4DBFA336F6E0AC925139543AED44CCE7C3720FD51F69458705AC68CD4FE6B6B13ABDC9746512969328454F18FAF8C595F642477FE96BB2A941D5BCD1D4AC8CC49880708FA9B378E3C4F3A9060BEE67CF9A4A4A695811051907E162753B56B0F6B410DBA74D8A84B2A14B3144E0EF1284754FD17ED950D5965B4B9DD46582DB1178D169C6BC465B0D6FF9CA3928FEF5B9AE4E418FC15E83EBEA0F87FA9FF5EED70050DED2849F47BF959D956850CE929851F0D8115F635B105EE2E4E15D04B2454BF6F4FADF034B10403119CD8E3B92FCC5B")) {
             return true;
         }
-
         BigInteger dhBI2 = dhBI.subtract(BigInteger.valueOf(1)).divide(BigInteger.valueOf(2));
         return !(!dhBI.isProbablePrime(30) || !dhBI2.isProbablePrime(30));
     }
-
     public static boolean isGoodGaAndGb(BigInteger g_a, BigInteger p) {
         return !(g_a.compareTo(BigInteger.valueOf(1)) != 1 || g_a.compareTo(p.subtract(BigInteger.valueOf(1))) != -1);
     }
-
     public static boolean arraysEquals(byte[] arr1, int offset1, byte[] arr2, int offset2) {
         if (arr1 == null || arr2 == null || offset1 < 0 || offset2 < 0 || arr1.length - offset1 != arr2.length - offset2 || arr1.length - offset1 < 0 || arr2.length - offset2 < 0) {
             return false;
@@ -174,7 +146,6 @@ public class Utilities {
         }
         return result;
     }
-
     public static byte[] computeSHA1(byte[] convertme, int offset, int len) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-1");
@@ -185,7 +156,6 @@ public class Utilities {
         }
         return new byte[20];
     }
-
     public static byte[] computeSHA1(ByteBuffer convertme, int offset, int len) {
         int oldp = convertme.position();
         int oldl = convertme.limit();
@@ -203,15 +173,12 @@ public class Utilities {
         }
         return new byte[20];
     }
-
     public static byte[] computeSHA1(ByteBuffer convertme) {
         return computeSHA1(convertme, 0, convertme.limit());
     }
-
     public static byte[] computeSHA1(byte[] convertme) {
         return computeSHA1(convertme, 0, convertme.length);
     }
-
     public static byte[] computeSHA256(byte[] convertme, int offset, int len) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -222,12 +189,10 @@ public class Utilities {
         }
         return null;
     }
-
     public static long bytesToLong(byte[] bytes) {
         return ((long) bytes[7] << 56) + (((long) bytes[6] & 0xFF) << 48) + (((long) bytes[5] & 0xFF) << 40) + (((long) bytes[4] & 0xFF) << 32)
                 + (((long) bytes[3] & 0xFF) << 24) + (((long) bytes[2] & 0xFF) << 16) + (((long) bytes[1] & 0xFF) << 8) + ((long) bytes[0] & 0xFF);
     }
-
     public static String MD5(String md5) {
         if (md5 == null) {
             return null;
